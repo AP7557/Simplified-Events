@@ -1,0 +1,101 @@
+.btn-save {
+	color: #ffffff;
+	background: #f36f2e;
+	font-size: 1rem;
+	cursor: pointer;
+	animation: pulse 1.5s infinite;
+	margin-top: 40px;
+	width: 170px;
+	height: 50px;
+	border-radius: 50px;
+}
+@keyframes pulse {
+	0% {
+		-moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
+		box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
+	}
+	70% {
+		-moz-box-shadow: 0 0 0 10px rgba(204, 169, 44, 0);
+		box-shadow: 0 0 0 20px rgba(204, 169, 44, 0);
+	}
+	100% {
+		-moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+		box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+	}
+}
+
+
+.typewriter h1 {
+	color: #8C5E58;
+	border-right: 1px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 480px;
+	white-space: nowrap;
+	overflow: hidden;
+	animation: typewriter 2s steps(29) .1s 1 normal both;
+}
+
+.typewriter #line-1 {
+	border-right: 1px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 180px;
+	white-space: nowrap;
+	overflow: hidden;
+	animation: typewriter 2s steps(29) .2s 1 normal both;
+}
+.typewriter #line-2 {
+	color: rgb(166, 230, 70);
+	border-right: 1px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 80px;
+	white-space: nowrap;
+	overflow: hidden;
+	animation: typewriter 2s steps(29) .3s 1 normal both;
+}
+.typewriter #line-3 {
+	color: #e6b11f;
+	border-right: 1px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 80px;
+	white-space: nowrap;
+	overflow: hidden;
+	animation: typewriter 2s steps(29) .3s 1 normal both;
+}
+.typewriter #line-4 {
+	color: rgb(102, 13, 13);
+	border-right: 1px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 80px;
+	white-space: nowrap;
+	overflow: hidden;
+	animation: typewriter 2s steps(29) .3s 1 normal both;
+}
+.typewriter #line-5 {
+	border-right: 1px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 480px;
+	white-space: nowrap;
+	overflow: hidden;
+	animation: typewriter 2s steps(29) .4s 1 normal both;
+}
+@keyframes typewriter {
+	0% {
+		width: 0;
+		border-right: none;
+	}
+	0.1% {
+		border-right: 1px solid rgb(220, 220, 220);
+	}
+	99.9% {
+		border-right: 1px solid egb(220 220 220);
+	}
+	100% {
+		border: none;
+	}
+}
