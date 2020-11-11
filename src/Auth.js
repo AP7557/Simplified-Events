@@ -1,27 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { auth } from "./firebase";
 import firebase from "firebase";
 import { useHistory } from "react-router-dom";
 import "./Signin.css";
 
-var token;
-
-export default function Auth1(props) {
+let token, name;
+export default function Auth1({signOut}) {
 	const history = useHistory();
+	//signin using google and get users permission to access calendar
 	const signin = () => {
 		var provider = new firebase.auth.GoogleAuthProvider();
-		provider.addScope("https://www.googleapis.com/auth/calendar");
 		provider.addScope("https://www.googleapis.com/auth/calendar.events");
 
 		auth.signInWithPopup(provider)
 			.then(function (result) {
 				token = result.credential.accessToken;
-				var user = result.user;
-				console.log({
-					token,
-					name: user.displayName,
-					email: user.email,
-				});
+				let user = result.user;
+				name = user.displayName,
 				history.push("/events");
 			})
 			.catch(function (error) {
@@ -29,7 +24,7 @@ export default function Auth1(props) {
 				console.log(error.message);
 			});
 	};
-
+	//signout user
 	const signout = () => {
 		firebase
 			.auth()
@@ -41,7 +36,7 @@ export default function Auth1(props) {
 				alert(error);
 			});
 	};
-	if (props.signout === true) {
+	if (signOut === true) {
 		signout();
 	}
 	return (
@@ -65,4 +60,4 @@ export default function Auth1(props) {
 	);
 }
 
-export { token };
+export { token, name };

@@ -1,24 +1,13 @@
 import React, { useState } from "react";
 import { token } from "./Auth";
-
+import List from "./List";
 export default function Remove() {
 	let [remove, setRemove] = useState("");
-	const getEvent = async () => {
+	let [IDs, setIDs] = useState("");
+
+	const removingEvent = async () => {
 		let result = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/primary/events?q=${remove}&key=${process.env.REACT_APP_AUTO_EVENTS_API_KEY}`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					Accept: "application/json",
-				},
-			}
-		);
-		let r = await result.json();
-		return r.items[r.items.length - 1];
-	};
-	const removingEvent = async (id) => {
-		let result = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/primary/events/${id}?key=${process.env.REACT_APP_AUTO_EVENTS_API_KEY}`,
+			`https://www.googleapis.com/calendar/v3/calendars/primary/events/${IDs}?key=${process.env.REACT_APP_API_KEY}`,
 			{
 				method: "DELETE",
 				headers: {
@@ -30,28 +19,24 @@ export default function Remove() {
 		if (!result.ok) {
 			alert(`Error Occured Code: ${result.status}`);
 		} else {
+			document.body.style.backgroundColor = "#039be5";
 			alert(`${remove} Event Successfully Removed`);
+			setRemove("")
 		}
 	};
 	const removing = (e) => {
-        e.preventDefault();
-        try {
-            getEvent()
-			.then((result) => {
-                if (result === undefined) {
-                    throw new Error("Id not valid")
-                }
-				removingEvent(result.id);
-			})
-			.catch((error) => {
-				alert(error);
-			});
-        } catch (error) {
-            console.log(error)
-        }
-
+		e.preventDefault();
+		try {
+			removingEvent();
+		} catch (error) {
+			alert(error);
+		}
 	};
-
+	const afterValue = (v, currentEventID, currentEventColor) => {
+		setIDs(currentEventID);
+		document.body.style.backgroundColor = currentEventColor || "#039be5";
+		setRemove(v);
+	};
 	return (
 		<div>
 			<h4 id="rem">Event Name Which You Want to REMOVE:</h4>
@@ -61,8 +46,12 @@ export default function Remove() {
 				onChange={(e) => {
 					setRemove(e.target.value);
 				}}
-			/><br/>
+			/>
+			<br />
 			<input type="submit" value="Submit" onClick={removing} />
+			<center>
+				<div>{remove && <List afterValue={afterValue} preName={remove} />}</div>
+			</center>
 		</div>
 	);
 }

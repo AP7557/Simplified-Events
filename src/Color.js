@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-export default function Color(props) {
-	// useEffect(() => {
-	// 	var ele = document.getElementById("colorChoice");
-	// 	ele.checked = false;
-	// }, []);
+export default function Color({colorPicker}) {
 	return (
 		<div
 			className="choice"
 			onClick={(e) => {
-				props.colorPicker(e.target.value);
+				colorPicker(e.target.value);
 			}}>
 			<input
 				type="radio"

@@ -7,12 +7,13 @@ import Nav from "./Nav";
 import { useHistory } from "react-router-dom";
 
 export default function Events() {
-	// if (!token) {
-	// 	const history = useHistory();
-	// 	alert("Please Sign In")
-	// 	history.push("/");
-
-	// }
+	//if not sign in then sign it
+	if (!token) {
+		const history = useHistory();
+		alert("Please Sign In");
+		history.push("/");
+	}
+	//render any page
 	let [adrender, setadrender] = useState(false);
 	let [uprender, setuprender] = useState(false);
 	let [signout, setsignout] = useState(false);
@@ -21,18 +22,21 @@ export default function Events() {
 		window.open("https://calendar.google.com/calendar/");
 	};
 
+	//render addevent page
 	const addEvent = async () => {
 		setadrender(!adrender);
 		setuprender(false);
 		document.body.style.backgroundColor = "#039be5";
 	};
 
+	//render update page
 	const updateEvent = () => {
 		setadrender(false);
 		setuprender(!uprender);
 		document.body.style.backgroundColor = "#039be5";
 	};
 
+	//signout user
 	const signOut = () => {
 		setsignout(true);
 	};
@@ -47,7 +51,7 @@ export default function Events() {
 			<div>
 				{adrender && <AddEvent />}
 				{uprender && <UpdateEvent />}
-				{signout && <Auth signout={signout} />}
+				{signout && <Auth signOut={signout} />}
 			</div>
 		</div>
 	);

@@ -13,29 +13,19 @@ const options = [
 	{ value: "location", label: "Edit Location" },
 	{ value: "recurrence", label: "Edit Recurrence" },
 ];
-const colors = [
-	"#7986cb",
-	"#33b679",
-	"#8e24aa",
-	"#e67c73",
-	"#f6c026",
-	"#f5511d",
-	"#039be5",
-	"#616161",
-	"#3f51b5",
-	"#0b8043",
-	"#d60000",
-];
-let data = {};
-let days = "";
-let recurrence = [];
-let submit;
+
 export default function changeevent() {
+	let data = {};
+	let days = "";
+	let recurrence = [];
+
+	//preName=event & preAttributes=what needs to change
 	let [preEvent, setpreEvent] = useState({
-		preE: "",
-		preEs: "",
+		preName: "",
+		preAttributes: "",
 	});
-	let [event, setEvent] = useState({
+	let [IDs, setIDs] = useState("");
+	let [events, setEvents] = useState({
 		summary: "",
 		description: "",
 		start: "",
@@ -44,25 +34,13 @@ export default function changeevent() {
 		recurrence: "",
 		until: "",
 	});
-	let [recurs, setrecurs] = useState(true);
+	//display/hide recurrence field
+	let [recuring, setRecuring] = useState(true);
 
-	const getEvent = async () => {
+	//update the event
+	const updatingEvent = async () => {
 		let result = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/primary/events?q=${preEvent.preE}&key=${process.env.REACT_APP_AUTO_EVENTS_API_KEY}`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					Accept: "application/json",
-				},
-			}
-		);
-		let r = await result.json();
-		return r.items[r.items.length - 1];
-	};
-
-	const updatingEvent = async (id) => {
-		let result = await fetch(
-			`https://www.googleapis.com/calendar/v3/calendars/primary/events/${id}?key=${process.env.REACT_APP_AUTO_EVENTS_API_KEY}`,
+			`https://www.googleapis.com/calendar/v3/calendars/primary/events/${IDs}?key=${process.env.REACT_APP_API_KEY}`,
 			{
 				method: "PATCH",
 				headers: {
@@ -74,98 +52,83 @@ export default function changeevent() {
 			}
 		);
 		if (!result.ok) {
-			alert(
-				`Please make sure the required\n("Event Name","Start/End Time" and "Recurrence(if not single day then also 'Until')")\nfields are completed`
-			);
+			alert("Something Went Wrong Try Again With Proper Values");
+			document.body.style.backgroundColor = "#039be5";
 		} else {
-			const r = await result.json();
-			alert(`${r.summary} Event Successfully Updated`);
+			alert(`${preEvent.preName} Event Successfully Updated`);
+			//reset everything
+			change([]);
+			setpreEvent(() => {
+				return {
+					preName: "",
+					preAttributes: "",
+				};
+			});
+			setEvents(() => {
+				return {
+					summary: "",
+					description: "",
+					start: "",
+					end: "",
+					location: "",
+					recurrence: "",
+					until: "",
+					color: "",
+				};
+			});
 		}
 	};
 
+	//make data obj->call update->reset all the fields
 	const updating = (e) => {
 		e.preventDefault();
 		try {
-			getEvent()
-				.then((result) => {
-					if (result === undefined) {
-						throw new Error("Id not valid");
-					}
-					let id = result.id;
-					document.body.style.backgroundColor =
-						colors[result.colorId];
-					return id;
-				})
-				.then((id) => {
-					for (const key in event) {
-						if (event[key] !== "") {
-							if (key === "start" || key === "end") {
-								data[key][
-									"dateTime"
-								] = `${event[key]}:00-05:00`;
-								data[key]["timeZone"] = "America/New_York";
-							} else if (key === "recurrence") {
-								if (event[key][0].value !== "S") {
-									event[key].forEach((e) => {
-										days += e.value + ",";
-									});
-									days = days.substring(0, days.length - 1);
-									recurrence = [
-										`RRULE:FREQ=WEEKLY;UNTIL=${event.until.replace(
-											/-/g,
-											""
-										)};BYDAY=${days}`,
-									];
-									data["recurrence"] = recurrence;
-									break;
-								} else {
-									data["recurrence"] = "";
-									break;
-								}
-							} else {
-								data[key] = event[key];
-							}
+			for (const key in events) {
+				if (events[key] !== "") {
+					if (key === "start" || key === "end") {
+						data[key] = {
+							dateTime: `${events[key]}:00-05:00`,
+							timeZone: "America/New_York",
+						};
+					} else if (key === "recurrence") {
+						if (events[key][0].value !== "S") {
+							events[key].forEach((e) => {
+								days += e.value + ",";
+							});
+							days = days.substring(0, days.length - 1);
+							recurrence = [
+								`RRULE:FREQ=WEEKLY;UNTIL=${events.until.replace(
+									/-/g,
+									""
+								)};BYDAY=${days}`,
+							];
+							data["recurrence"] = recurrence;
+							break;
+						} else {
+							data["recurrence"] = "";
+							break;
 						}
+					} else {
+						data[key] = events[key];
 					}
-					return id;
-				})
-				.then((id) => {
-					updatingEvent(id);
-				})
-				.catch((error) => {
-					alert(error);
-				});
+				}
+			}
+			updatingEvent();
 		} catch (error) {
 			alert(error);
+			document.body.style.backgroundColor = "#039be5";
 		}
-
-		setpreEvent(() => {
-			return {
-				preE: "",
-				preEs: "",
-			};
-		});
-		setEvent(() => {
-			return {
-				summary: "",
-				description: "",
-				start: "",
-				end: "",
-				location: "",
-				recurrence: "",
-				until: "",
-				color: "",
-			};
-		});
 	};
+
+	//control display of fields based of user selection
 	const change = (e) => {
 		try {
-			event = document.getElementsByClassName("event");
+			let event = document.getElementsByClassName("event");
 			[...event].forEach((a) => {
 				a.style.display = "none";
 			});
-			setrecurs(true);
-			submit = document.getElementById("submit");
+			setRecuring(true);
+			let submit = document.getElementById("submit");
 			e.forEach((i) => {
 				switch (i.value) {
 					case "summary":
@@ -208,7 +171,7 @@ export default function changeevent() {
 						[...event].forEach((a) => {
 							a.style.display = " block";
 						});
-						setrecurs(false);
+						setRecuring(false);
 						submit.style.display = "block";
 						break;
 					default:
@@ -217,13 +180,21 @@ export default function changeevent() {
 		} catch (error) {}
 	};
 
-	const recur = (r) => {
-		setEvent((prevState) => {
+	const editRecurrence = (r) => {
+		setEvents((prevState) => {
 			return { ...prevState, recurrence: r };
 		});
 	};
+
+	const afterValue = (v, currentEventID, currentEventColor) => {
+		setIDs(currentEventID);
+		document.body.style.backgroundColor = currentEventColor || "#039be5";
+		setpreEvent((prevState) => {
+			return { ...prevState, preName: v };
+		});
+	};
 	return (
-		<div className="all3">
+		<div className="grid_rcl">
 			<center>
 				<form className="remove">
 					<Remove></Remove>
@@ -231,15 +202,15 @@ export default function changeevent() {
 			</center>
 			<center className="update">
 				<form>
-					<h4 id="cha">Event Name Which You Want to Change:</h4>
+					<h4 id="change">Event Name, Pick One From The List to The Right:</h4>
 					<input
 						type="text"
 						id="change"
-						value={preEvent.preE}
+						value={preEvent.preName}
 						onChange={(e) => {
 							const s = e.target.value;
 							setpreEvent((prevState) => {
-								return { ...prevState, preE: s };
+								return { ...prevState, preName: s };
 							});
 						}}
 					/>
@@ -247,13 +218,12 @@ export default function changeevent() {
 					<Select
 						isMulti
 						required
-						id="recur"
 						type="text"
-						value={preEvent.preEs}
+						value={preEvent.preAttributes}
 						onChange={(e) => {
 							change(e);
 							setpreEvent((prevState) => {
-								return { ...prevState, preEs: e };
+								return { ...prevState, preAttributes: e };
 							});
 						}}
 						options={options}
@@ -265,28 +235,26 @@ export default function changeevent() {
 						type="text"
 						className="event summary"
 						style={{ display: "none" }}
-						value={event.summary}
+						value={events.summary}
 						placeholder="Required"
 						onChange={(e) => {
 							const s = e.target.value;
-							setEvent((prevState) => {
+							setEvents((prevState) => {
 								return { ...prevState, summary: s };
 							});
 						}}
 					/>
-					<h4
-						className="event description"
-						style={{ display: "none" }}>
+					<h4 className="event description" style={{ display: "none" }}>
 						Description:
 					</h4>
 					<input
 						type="text"
 						className="event description"
 						style={{ display: "none" }}
-						value={event.description}
+						value={events.description}
 						onChange={(e) => {
 							const d = e.target.value;
-							setEvent((prevState) => {
+							setEvents((prevState) => {
 								return { ...prevState, description: d };
 							});
 						}}
@@ -299,10 +267,10 @@ export default function changeevent() {
 						type="datetime-local"
 						className="event start"
 						style={{ display: "none" }}
-						value={event.start}
+						value={events.start}
 						onChange={(e) => {
 							const s = e.target.value;
-							setEvent((prevState) => {
+							setEvents((prevState) => {
 								return { ...prevState, start: s };
 							});
 						}}
@@ -315,10 +283,10 @@ export default function changeevent() {
 						type="datetime-local"
 						className="event end"
 						style={{ display: "none" }}
-						value={event.end}
+						value={events.end}
 						onChange={(e) => {
 							const ed = e.target.value;
-							setEvent((prevState) => {
+							setEvents((prevState) => {
 								return { ...prevState, end: ed };
 							});
 						}}
@@ -331,44 +299,39 @@ export default function changeevent() {
 						type="text"
 						className="event location"
 						style={{ display: "none" }}
-						value={event.location}
+						value={events.location}
 						onChange={(e) => {
 							const l = e.target.value;
-							setEvent((prevState) => {
+							setEvents((prevState) => {
 								return { ...prevState, location: l };
 							});
 						}}
 					/>
 					<br />
-					<h4
-						className="event recurrence"
-						style={{ display: "none" }}>
+					<h4 className="event recurrence" style={{ display: "none" }}>
 						Recurrence:
 					</h4>
 					<Recurrence
-						recur={recur}
-						value={event.recurrence}
-						u={recurs}></Recurrence>
+						editRecurrence={editRecurrence}
+						value={events.recurrence}
+						show={recuring}></Recurrence>
 
-					<div
-						className="event recurrence"
-						style={{ display: "none" }}>
+					<div className="event recurrence" style={{ display: "none" }}>
 						Until:
 					</div>
 					<input
 						type="date"
 						className="event recurrence"
 						style={{ display: "none" }}
-						value={event.until}
+						value={events.until}
 						onChange={(e) => {
 							const u = e.target.value;
-							setEvent((prevState) => {
+							setEvents((prevState) => {
 								return { ...prevState, until: u };
 							});
 						}}
 					/>
 					<br />
-
 					<input
 						type="submit"
 						className="event"
@@ -381,7 +344,9 @@ export default function changeevent() {
 			</center>
 			<center>
 				<div>
-					{preEvent.preE && <List></List>}
+					{preEvent.preName && (
+						<List afterValue={afterValue} preName={preEvent.preName} />
+					)}
 				</div>
 			</center>
 		</div>

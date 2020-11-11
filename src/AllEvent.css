@@ -1,48 +1,15 @@
-body {
-	background-color: #039be5;
-}
-nav {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	min-height: 10vh;
-	background: rgb(73, 79, 82);
-	color: white;
-}
 
-.nav-links {
-	width: 40%;
-	padding-left: 0px;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	list-style: none;
-}
-
-.signout {
-	margin-top: 0px;
-	font-weight: 400;
-	padding: 0.375rem 0.75rem;
-	background: #f36f2e;
-	border-radius: 50px;
-}
 .container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-img {
-	width: 100px;
-	background: white;
-	border-radius: 50px;
-}
-
 h4 {
 	margin-top: 10px;
 	margin-bottom: 0px;
 }
-#change {
+input > #change {
 	margin-bottom: 10px;
 }
 
@@ -51,11 +18,11 @@ h4 {
 	grid-template-columns: auto auto auto auto;
 }
 
-#recur {
+#recurDisplay {
 	width: 211px;
 }
 
-.all3 {
+.grid_rcl {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 10px;
@@ -67,13 +34,17 @@ h4 {
 .update {
 	grid-column: auto;
 }
-.li{
+.myList::selection{
+	text-decoration: underline;
 	grid-column: auto;
+	cursor: pointer;
+	background-color: transparent;
+	color: #000;
 }
 
-#cha {
-	color: #e6b11f;
-}
-#rem {
-	color: rgb(102, 13, 13);
+li{
+	text-decoration: underline;
+	cursor: pointer;
+	list-style: none;
+
 }

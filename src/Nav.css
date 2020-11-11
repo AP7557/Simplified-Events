@@ -1,0 +1,28 @@
+body {
+	background-color: #039be5;
+}
+nav {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	min-height: 10vh;
+	background: rgb(73, 79, 82);
+	color: white;
+}
+
+.nav-links {
+	width: 40%;
+	padding-left: 0px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	list-style: none;
+}
+
+img {
+	width: 100px;
+	background: white;
+	border-radius: 50px;
+	cursor: pointer;
+}
+

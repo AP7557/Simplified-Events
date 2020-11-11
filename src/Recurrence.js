@@ -11,18 +11,18 @@ const options = [
 	{ value: "SU", label: "Every Sunday" },
 ];
 
-export default function Recurrence(props) {
+export default function Recurrence({show, value, editRecurrence}) {
 	return (
 		<div
 			id="recurrence"
-			style={{ display: props.u === true ? "none" : "block" }}>
+			style={{ display: show === true ? "none" : "block" }}>
 			<Select
 				isMulti
 				type="text"
-				id="recur"
-				value={props.value}
+				id="recurDisplay"
+				value={value}
 				onChange={(e) => {
-					props.recur(e);
+					editRecurrence(e);
 				}}
 				options={options}
 			/>
